@@ -1,16 +1,22 @@
-# ex00
+# 🧱 Module00 - EX00 : Premier Projet Flutter
 
-A new Flutter project.
+## 🎯 Objectif de l'exercice
 
-## Getting Started
+Ce premier exercice vise à **prendre en main la structure de base d’un projet Flutter** et à se familiariser avec les notions de **widgets** et de **réactivité (responsive design)**.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 📚 Sujet
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Créer une page unique contenant deux éléments **centrés horizontalement et verticalement** :
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Un **texte**
+- Un **bouton** situé juste en dessous
+
+Lorsque l’utilisateur clique sur le bouton, le message suivant doit apparaître dans la console de debug :
+
+## 🛠️ Lancer le projet
+
+Exécutez `flutter run -d chrome` dans le repo pour lancer le projet dans le terminal.
+
+Exécutez `flutter clean` pour supprimer tous les fichiers générés automatiquement par Flutter lors des précédentes compilations.
