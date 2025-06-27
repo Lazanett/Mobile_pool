@@ -1,23 +1,47 @@
-                            Module01
-EX00 : weather_app                   
+ 🌦️ Weather App — Module 01 - EX00
 
-Goal of the Exercise:
-Build the basic structure of a responsive weather app in Flutter. It includes a top app bar with a search field and a geolocation button, and a bottom navigation bar with 3 tabs: “Currently”, “Today”, and “Weekly”. Each tab just shows its name for now. Users should be able to switch tabs by tapping or swiping.
+## 🎯 Objectif de l'exercice
 
-Main Widgets to Use:
-AppBar: top bar with search and geolocation button
+Créer la **structure de base** d'une application météo responsive avec Flutter.  
+Elle comprend :
 
-TextField: search input field inside the AppBar
+- Une barre supérieure (AppBar) avec un champ de recherche et un bouton de géolocalisation.
+- Une barre de navigation inférieure avec 3 onglets :
+  - "Currently" (Actuellement)
+  - "Today" (Aujourd’hui)
+  - "Weekly" (Semaine)
+- Chaque onglet affiche un simple texte pour le moment.
+- L’utilisateur peut **changer d’onglet en cliquant** ou **en faisant un glissement (swipe)**.
 
-IconButton: buttons for search and geolocation
+---
 
-BottomAppBar: bottom bar holding the tabs
+## 🧱 Widgets principaux utilisés
 
-TabBar: shows the tabs with icons and text
+| Widget        | Rôle                                                                 |
+|---------------|----------------------------------------------------------------------|
+| `AppBar`      | Barre supérieure contenant le champ de recherche et les boutons      |
+| `TextField`   | Champ de recherche pour entrer une ville                             |
+| `IconButton`  | Boutons pour rechercher ou utiliser la géolocalisation               |
+| `BottomAppBar`| Barre inférieure accueillant les onglets                             |
+| `TabBar`      | Affiche les onglets avec icônes et textes                            |
+| `TabBarView`  | Contenu affiché pour chaque onglet sélectionné                       |
+| `TabController`| Synchronise l’onglet actif avec son contenu et gère les interactions |
 
-TabBarView: displays content for each tab
+---
 
-TabController: controls syncing between the tabs and the content, and manages tap and swipe navigation
+## 🤖 Pourquoi `TabController` est important
 
-Why TabController is Important:
-The TabController keeps the tab selection and the displayed content in sync. It also handles smooth switching when the user taps a tab or swipes between tabs. Without it, the tabs and content would not stay coordinated, which would hurt the user experience.
+Le `TabController` assure la **synchronisation entre les onglets** (visibles dans la `TabBar`) et leur **contenu respectif** (affiché via `TabBarView`).
+
+### Ce qu’il permet :
+- Gérer les **changements d’onglets via clic** ou **swipe horizontal**.
+- Maintenir une **expérience utilisateur fluide** et cohérente.
+- Sans lui, les onglets et leur contenu pourraient **ne pas rester coordonnés**.
+
+---
+
+## 🛠️ Lancer le projet
+
+Exécutez `flutter run -d chrome` dans le repo pour lancer le projet dans le terminal.
+
+Exécutez `flutter clean` pour supprimer tous les fichiers générés automatiquement par Flutter lors des précédentes compilations.
