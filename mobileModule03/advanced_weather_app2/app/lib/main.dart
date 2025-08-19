@@ -8,7 +8,7 @@ import 'dart:async';
 
 
 void main() {
-  runApp(const WeatherApp()); // ou ton widget racine
+  runApp(const WeatherApp()); 
 }
 
 class WeatherApp extends StatelessWidget {
@@ -50,6 +50,12 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
   Map<String, String>? _locationInfo;
   bool _showNoResultsError = false;
   bool _showConnectionError = false;
+  String _displayLocation = '';
+  double _currentTemp = 0.0;
+  String _currentEmoji = '';
+  String _currentDesc = '';
+  double _currentWind = 0.0;
+
   
   @override
   void initState() {
@@ -68,7 +74,9 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
   }
   
   // get city suggestion
- Future<void> _fetchCitySuggestions(String query) async {
+  // Remplacez votre méthode _fetchCitySuggestions par celle-ci :
+
+  Future<void> _fetchCitySuggestions(String query) async {
     if (query.length < 2) {
       setState(() {
         _suggestions = [];
@@ -111,24 +119,24 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
             'lon': e['longitude'],
           }).toList();
           
-          // Condition pour vérifier si aucune ville n'est trouvée
+ 
           if (_suggestions.isEmpty && query.length >= 2) {
             _showNoResultsError = true;
           } else {
-            // Réinitialiser l'erreur seulement si on a trouvé des résultats
+        
             _showNoResultsError = false;
           }
         });
       } else {
         setState(() {
           _showConnectionError = true;
-          _showNoResultsError = false; // Réinitialiser car c'est une erreur de connexion
+          _showNoResultsError = false; 
         });
       }
     } catch (e) {
       setState(() {
         _showConnectionError = true;
-        _showNoResultsError = false; // Réinitialiser car c'est une erreur de connexion
+        _showNoResultsError = false;
       });
     } finally {
       setState(() => _loadingSuggestions = false);
@@ -282,11 +290,16 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
         
         setState(() {
           _locationInfo = locationInfo;
-          _weatherInfo =
-            '$displayLocation\n'
-            '🌡 ${temp.toStringAsFixed(1)} °C\n'
-            '$emoji $desc\n'
-            '💨 ${wind.toStringAsFixed(1)} km/h';
+          _currentCityName = cityName;
+
+          // Stockage des valeurs individuelles
+          _displayLocation = displayLocation;
+          _currentTemp = temp;
+          _currentEmoji = emoji;
+          _currentDesc = desc;
+          _currentWind = wind;
+
+          _weatherInfo = '$displayLocation\n...';
         });
       } else {
         setState(() {
@@ -594,45 +607,74 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
   
   // style suggestion
   Widget _buildSuggestions() {
-    if (_loadingSuggestions) return const LinearProgressIndicator();
-    if (_error.isNotEmpty) return Text(_error, style: const TextStyle(color: Colors.red));
+    if (_loadingSuggestions) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: const LinearProgressIndicator(),
+      );
+    }
+    
+    if (_error.isNotEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          _error, 
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
 
     final limitedSuggestions = _suggestions.take(5).toList();
 
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: limitedSuggestions.length,
-      itemBuilder: (c, i) {
-        final s = limitedSuggestions[i];
-        return ListTile(
-          title: RichText(
-            text: TextSpan(
-              style: DefaultTextStyle.of(c).style,
-              children: [
-                TextSpan(
-                  text: s['name'],
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(text: ', ${s['region']}, ${s['country']}'),
-              ],
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 250),
+      child: ListView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: limitedSuggestions.length,
+        itemBuilder: (c, i) {
+          final s = limitedSuggestions[i];
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: i < limitedSuggestions.length - 1 
+                  ? BorderSide(color: Colors.grey.shade300, width: 0.5)
+                  : BorderSide.none,
+              ),
             ),
-          ),
-          onTap: () {
-            _textController.text = s['name'];
-            setState(() {
-              _suggestions = [];
-              _showNoResultsError = false;
-              _showConnectionError = false;
-            });
-            final locationInfo = {
-              'name': s['name'],
-              'region': s['region'],
-              'country': s['country'],
-            };
-            _fetchWeather(s['lat'], s['lon'], s['name'], locationInfo: convertMap(locationInfo));
-          },
-        );
-      },
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              dense: true,
+              title: RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(c).style,
+                  children: [
+                    TextSpan(
+                      text: s['name'],
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: ', ${s['region']}, ${s['country']}'),
+                  ],
+                ),
+              ),
+              onTap: () {
+                _textController.text = s['name'];
+                setState(() {
+                  _suggestions = [];
+                  _showNoResultsError = false;
+                  _showConnectionError = false;
+                });
+                final locationInfo = {
+                  'name': s['name'],
+                  'region': s['region'],
+                  'country': s['country'],
+                };
+                _fetchWeather(s['lat'], s['lon'], s['name'], locationInfo: convertMap(locationInfo));
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -640,35 +682,25 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
   Widget _buildTabContent(String title) {
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth < 375) {
-      return const SizedBox.shrink(); 
+      return const SizedBox.shrink();
     }
-    
+
     if (_showConnectionError) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.wifi_off,
-              size: 64,
-              color: Colors.red,
-            ),
+            const Icon(Icons.wifi_off, size: 64, color: Colors.red),
             const SizedBox(height: 16),
             const Text(
               'The service connection is lost, please check your internet connection or try again later.',
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                setState(() {
-                  _showConnectionError = false;
-                });
+                setState(() => _showConnectionError = false);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.indigo[600],
@@ -680,57 +712,88 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
         ),
       );
     }
-    
+
     if (_showNoResultsError) {
       return const Center(
         child: Text(
           'Could not find any result for the supplied address or coordinates.',
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.w500),
           textAlign: TextAlign.center,
         ),
       );
     }
+
     if (_error.isNotEmpty) {
       return Center(
         child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.location_off, size: 64, color: Colors.amber),
-            const SizedBox(height: 16),
-            Text(
-              _error,
-              style: const TextStyle(
-                color: Colors.red,
-                fontSize: 16,
-                fontWeight: FontWeight.w500
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.location_off, size: 64, color: Colors.amber),
+              const SizedBox(height: 16),
+              Text(
+                _error,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-    
+      );
+    }
+
     if (title == 'Currently') {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Center(
-              child: Text(
-                _weatherInfo.isEmpty
-                  ? 'Search for a city or use your location'
-                  : _weatherInfo,
-                style: const TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
+              child: _weatherInfo.isEmpty
+                ? const Text(
+                    'Search for a city or use your location',
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  )
+                : Text.rich(
+                    TextSpan(
+                      style: DefaultTextStyle.of(context).style.copyWith(fontSize: 20),
+                      children: [
+                        TextSpan(
+                          text: '$_displayLocation\n\n',
+                          style: const TextStyle(color: Colors.indigo, fontSize: 26, fontWeight: FontWeight.bold, decoration: TextDecoration.none,),
+                          
+                        ),
+                        TextSpan(
+                          text: '${_currentTemp.toStringAsFixed(1)} °C\n',
+                          style: const TextStyle(color: Colors.orange, fontSize: 24, fontWeight: FontWeight.bold, decoration: TextDecoration.none),
+                        ),
+                        TextSpan(
+                          text: _currentEmoji,
+                          style: const TextStyle(fontSize: 40,
+                          decoration: TextDecoration.none),
+
+                        ),
+                        TextSpan(
+                          text: ' \n$_currentDesc\n\n',
+                          style: const TextStyle(fontSize: 18,
+                          decoration: TextDecoration.none,
+                          color: Color(0xFF424242)),
+                        ),
+                        TextSpan(
+                          text: '💨 ${_currentWind.toStringAsFixed(1)} km/h',
+                          style: const TextStyle(fontSize: 15,
+                          decoration: TextDecoration.none,
+                          color: Color(0xFF424242)),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
             ),
           ),
         ],
@@ -740,122 +803,159 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
     } else if (title == 'Weekly') {
       return _buildWeeklyTab();
     }
-    
+
     return Center(child: Text('$title section', style: const TextStyle(fontSize: 24)));
   }
-  
+
+    
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: TextField(
-          controller: _textController,
-          onChanged: (value) {
-            _fetchCitySuggestions(value);
-          },
-          decoration: InputDecoration(
-            hintText: 'Search city...',
-            hintStyle: TextStyle(color: Colors.indigo[600]!),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            filled: true,
-            fillColor: Colors.white,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
+      extendBodyBehindAppBar: true,
+      extendBody: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          forceMaterialTransparency: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: TextField(
+            controller: _textController,
+            onChanged: (value) {
+              _fetchCitySuggestions(value);
+            },
+            decoration: InputDecoration(
+              hintText: 'Search city...',
+              hintStyle: TextStyle(color: Colors.indigo[600]!),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.01),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
-            ),
+            style: const TextStyle(color: Color(0xFF3F51B5), fontWeight: FontWeight.w600),
           ),
-          style: const TextStyle(color: Color(0xFF3F51B5), fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    await _fetchCitySuggestions(_textController.text);
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.indigo[600],
-                      shape: BoxShape.circle,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await _fetchCitySuggestions(_textController.text);
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[600]!.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.search, color: Colors.white, size: 20),
                     ),
-                    child: const Icon(Icons.search, color: Colors.white, size: 20),
                   ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () async {
-                    await _getCurrentLocation();
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.indigo[600],
-                      shape: BoxShape.circle,
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () async {
+                      await _getCurrentLocation();
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[600]!.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.my_location, color: Colors.white, size: 20),
                     ),
-                    child: const Icon(Icons.my_location, color: Colors.white, size: 20),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: Colors.indigo[600],
-            height: 2.0,
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.indigo[600]!.withOpacity(0.8),
+              height: 2.0,
+            ),
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          if (_suggestions.isNotEmpty) _buildSuggestions(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildTabContent('Currently'),
-                _buildTabContent('Today'),
-                _buildTabContent('Weekly'),
-              ],
+          Positioned.fill(
+            child: Image.asset(
+              'assets/sky.jpg',
+              fit: BoxFit.cover,
             ),
+          ),
+          Column(
+            children: [
+              SizedBox(height: kToolbarHeight + MediaQuery.of(context).padding.top),
+              if (_suggestions.isNotEmpty) _buildSuggestions(),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTabContent('Currently'),
+                    _buildTabContent('Today'),
+                    _buildTabContent('Weekly'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        child: BottomAppBar(
-          child: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(icon: Icon(Icons.access_time), text: "Currently"),
-              Tab(icon: Icon(Icons.today), text: "Today"),
-              Tab(icon: Icon(Icons.calendar_view_week), text: "Weekly"),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.white.withOpacity(0.01),
             ],
-            labelColor: Colors.indigo[600],
-            unselectedLabelColor: Colors.indigo[600],
-            indicatorColor: Colors.indigo[600],
-            overlayColor: MaterialStateProperty.resolveWith(
-              (Set<MaterialState> states) {
-                if (states.contains(MaterialState.hovered) || states.contains(MaterialState.pressed)) {
-                  return Colors.transparent;
-                }
-                return null;
-              },
+          ),
+        ),
+        child: SafeArea(
+          child: Container(
+            height: 60,
+            child: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(icon: Icon(Icons.access_time), text: "Currently"),
+                Tab(icon: Icon(Icons.today), text: "Today"),
+                Tab(icon: Icon(Icons.calendar_view_week), text: "Weekly"),
+              ],
+              labelColor: Colors.indigo[600],
+              unselectedLabelColor: Colors.indigo[600],
+              indicatorColor: Colors.indigo[600],
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+              overlayColor: MaterialStateProperty.resolveWith(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.hovered) || states.contains(MaterialState.pressed)) {
+                    return Colors.white.withOpacity(0.1);
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 }

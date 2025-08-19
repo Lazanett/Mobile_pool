@@ -68,7 +68,9 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
   }
   
   // get city suggestion
- Future<void> _fetchCitySuggestions(String query) async {
+  // Remplacez votre méthode _fetchCitySuggestions par celle-ci :
+
+  Future<void> _fetchCitySuggestions(String query) async {
     if (query.length < 2) {
       setState(() {
         _suggestions = [];
@@ -594,45 +596,74 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
   
   // style suggestion
   Widget _buildSuggestions() {
-    if (_loadingSuggestions) return const LinearProgressIndicator();
-    if (_error.isNotEmpty) return Text(_error, style: const TextStyle(color: Colors.red));
+    if (_loadingSuggestions) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: const LinearProgressIndicator(),
+      );
+    }
+    
+    if (_error.isNotEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          _error, 
+          style: const TextStyle(color: Colors.red),
+        ),
+      );
+    }
 
     final limitedSuggestions = _suggestions.take(5).toList();
 
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: limitedSuggestions.length,
-      itemBuilder: (c, i) {
-        final s = limitedSuggestions[i];
-        return ListTile(
-          title: RichText(
-            text: TextSpan(
-              style: DefaultTextStyle.of(c).style,
-              children: [
-                TextSpan(
-                  text: s['name'],
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(text: ', ${s['region']}, ${s['country']}'),
-              ],
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 250), 
+      child: ListView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: limitedSuggestions.length,
+        itemBuilder: (c, i) {
+          final s = limitedSuggestions[i];
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: i < limitedSuggestions.length - 1 
+                  ? BorderSide(color: Colors.grey.shade300, width: 0.5)
+                  : BorderSide.none,
+              ),
             ),
-          ),
-          onTap: () {
-            _textController.text = s['name'];
-            setState(() {
-              _suggestions = [];
-              _showNoResultsError = false;
-              _showConnectionError = false;
-            });
-            final locationInfo = {
-              'name': s['name'],
-              'region': s['region'],
-              'country': s['country'],
-            };
-            _fetchWeather(s['lat'], s['lon'], s['name'], locationInfo: convertMap(locationInfo));
-          },
-        );
-      },
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              dense: true,
+              title: RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(c).style,
+                  children: [
+                    TextSpan(
+                      text: s['name'],
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(text: ', ${s['region']}, ${s['country']}'),
+                  ],
+                ),
+              ),
+              onTap: () {
+                _textController.text = s['name'];
+                setState(() {
+                  _suggestions = [];
+                  _showNoResultsError = false;
+                  _showConnectionError = false;
+                });
+                final locationInfo = {
+                  'name': s['name'],
+                  'region': s['region'],
+                  'country': s['country'],
+                };
+                _fetchWeather(s['lat'], s['lon'], s['name'], locationInfo: convertMap(locationInfo));
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -694,7 +725,7 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
         ),
       );
     }
-    if (_error.isNotEmpty) {
+     if (_error.isNotEmpty) {
       return Center(
         child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -717,6 +748,7 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
       ),
     );
   }
+    
     
     if (title == 'Currently') {
       return Column(
@@ -743,119 +775,156 @@ class _WeatherHomePageState extends State with SingleTickerProviderStateMixin {
     
     return Center(child: Text('$title section', style: const TextStyle(fontSize: 24)));
   }
-  
+    
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: TextField(
-          controller: _textController,
-          onChanged: (value) {
-            _fetchCitySuggestions(value);
-          },
-          decoration: InputDecoration(
-            hintText: 'Search city...',
-            hintStyle: TextStyle(color: Colors.indigo[600]!),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            filled: true,
-            fillColor: Colors.white,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
+      extendBodyBehindAppBar: true,
+      extendBody: true, // IMPORTANT: Permet au body de s'étendre derrière la bottom navigation
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          forceMaterialTransparency: true,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: TextField(
+            controller: _textController,
+            onChanged: (value) {
+              _fetchCitySuggestions(value);
+            },
+            decoration: InputDecoration(
+              hintText: 'Search city...',
+              hintStyle: TextStyle(color: Colors.indigo[600]!),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.01), // Transparence pour l'input
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
+              ),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.indigo[600]!, width: 2),
-            ),
+            style: const TextStyle(color: Color(0xFF3F51B5), fontWeight: FontWeight.w600),
           ),
-          style: const TextStyle(color: Color(0xFF3F51B5), fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    await _fetchCitySuggestions(_textController.text);
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.indigo[600],
-                      shape: BoxShape.circle,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await _fetchCitySuggestions(_textController.text);
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[600]!.withOpacity(0.9), // Légère transparence
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.search, color: Colors.white, size: 20),
                     ),
-                    child: const Icon(Icons.search, color: Colors.white, size: 20),
                   ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () async {
-                    await _getCurrentLocation();
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.indigo[600],
-                      shape: BoxShape.circle,
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () async {
+                      await _getCurrentLocation();
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.indigo[600]!.withOpacity(0.9), // Légère transparence
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.my_location, color: Colors.white, size: 20),
                     ),
-                    child: const Icon(Icons.my_location, color: Colors.white, size: 20),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: Colors.indigo[600],
-            height: 2.0,
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.indigo[600]!.withOpacity(0.8),
+              height: 2.0,
+            ),
           ),
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          if (_suggestions.isNotEmpty) _buildSuggestions(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildTabContent('Currently'),
-                _buildTabContent('Today'),
-                _buildTabContent('Weekly'),
-              ],
+          Positioned.fill(
+            child: Image.asset(
+              'assets/sky.jpg',
+              fit: BoxFit.cover,
             ),
+          ),
+          Column(
+            children: [
+              // Espace vide pour laisser la place à l'AppBar
+              SizedBox(height: kToolbarHeight + MediaQuery.of(context).padding.top),
+              if (_suggestions.isNotEmpty) _buildSuggestions(),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTabContent('Currently'),
+                    _buildTabContent('Today'),
+                    _buildTabContent('Weekly'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
-      bottomNavigationBar: SafeArea(
-        child: BottomAppBar(
-          child: TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(icon: Icon(Icons.access_time), text: "Currently"),
-              Tab(icon: Icon(Icons.today), text: "Today"),
-              Tab(icon: Icon(Icons.calendar_view_week), text: "Weekly"),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.white.withOpacity(0.01),
             ],
-            labelColor: Colors.indigo[600],
-            unselectedLabelColor: Colors.indigo[600],
-            indicatorColor: Colors.indigo[600],
-            overlayColor: MaterialStateProperty.resolveWith(
-              (Set<MaterialState> states) {
-                if (states.contains(MaterialState.hovered) || states.contains(MaterialState.pressed)) {
-                  return Colors.transparent;
-                }
-                return null;
-              },
+          ),
+        ),
+        child: SafeArea(
+          child: Container(
+            height: 60,
+            child: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(icon: Icon(Icons.access_time), text: "Currently"),
+                Tab(icon: Icon(Icons.today), text: "Today"),
+                Tab(icon: Icon(Icons.calendar_view_week), text: "Weekly"),
+              ],
+              labelColor: Colors.indigo[600], // Texte blanc pour contraster avec le fond
+              unselectedLabelColor: Colors.indigo[600],
+              indicatorColor: Colors.indigo[600],
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+              overlayColor: MaterialStateProperty.resolveWith(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.hovered) || states.contains(MaterialState.pressed)) {
+                    return Colors.white.withOpacity(0.1);
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 }
