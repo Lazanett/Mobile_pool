@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
         // 🌐 Web : popup Google directement via Firebase
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
         googleProvider.addScope('email');
-        googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
+        googleProvider.setCustomParameters({'login_hint': 'user@example.com', 'prompt': 'select_account',});
 
         userCredential =
             await FirebaseAuth.instance.signInWithPopup(googleProvider);
@@ -47,27 +47,71 @@ class _LoginPageState extends State<LoginPage> {
         user = userCredential.user;
       });
     } catch (e) {
-      debugPrint("Erreur Google Sign-In: $e");
+      debugPrint("Error Google Sign-In: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur de connexion: $e")),
+        SnackBar(content: Text("Connection error Google: $e")),
       );
     }
   }
 
-  // 🔒 Déconnexion
-  Future<void> _logout() async {
-    await FirebaseAuth.instance.signOut();
-    if (!kIsWeb) {
-      await GoogleSignIn().signOut();
+  // 🔑 Connexion GitHub
+  Future<void> _loginWithGithub() async {
+    try {
+      UserCredential userCredential;
+
+      if (kIsWeb) {
+        GithubAuthProvider githubProvider = GithubAuthProvider();
+        githubProvider.addScope('read:user');
+        githubProvider.setCustomParameters({
+          'allow_signup': 'true', 'prompt': 'select_account',
+        });
+
+        userCredential = await FirebaseAuth.instance.signInWithPopup(githubProvider);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("GitHub login mobile")),
+        );
+        return;
+      }
+
+      setState(() {
+        user = userCredential.user;
+      });
+    } catch (e) {
+      debugPrint("Error GitHub Sign-In: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Connection error GitHub: $e")),
+      );
     }
-    setState(() {
-      user = null;
-    });
   }
 
-  void _loginWithGithub() {
-    debugPrint("Login avec GitHub (à implémenter)");
+
+  // 🔒 Déconnexion
+  Future<void> _logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+
+      if (!kIsWeb) {
+        final googleSignIn = GoogleSignIn();
+        await googleSignIn.disconnect();
+        await googleSignIn.signOut();
+      }
+      setState(() {
+        user = null;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Disconnected")),
+      );
+    } catch (e) {
+      debugPrint("Disconnection error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error during logout: $e")),
+      );
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +135,6 @@ class _LoginPageState extends State<LoginPage> {
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // --- Bouton Google ---
                     SizedBox(
                       width: 250,
                       height: 60,
@@ -109,8 +152,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // --- Bouton GitHub ---
                     SizedBox(
                       width: 250,
                       height: 60,

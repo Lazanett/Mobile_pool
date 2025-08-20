@@ -48,7 +48,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: "834854785345",
     appId: "1:834854785345:web:93dff27ab48a760d4591c0",
     measurementId: "G-ND3TS723LH"
-    
   );
 
   static const FirebaseOptions android = FirebaseOptions(
