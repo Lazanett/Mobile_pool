@@ -52,38 +52,42 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'your-android-api-key',
-    appId: '1:your-project-number:android:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
+    apiKey: "AIzaSyBwX3ykp7URAEe8bWpzUoWZdgx322zlDK0",
+    authDomain: "diaryapp-1d89f.firebaseapp.com",
+    projectId: "diaryapp-1d89f",
+    storageBucket: "diaryapp-1d89f.firebasestorage.app",
+    messagingSenderId: "834854785345",
+    appId: "1:834854785345:web:93dff27ab48a760d4591c0",
+    measurementId: "G-ND3TS723LH"
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'your-ios-api-key',
-    appId: '1:your-project-number:ios:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
-    iosBundleId: 'com.example.app',
+    apiKey: "AIzaSyBwX3ykp7URAEe8bWpzUoWZdgx322zlDK0",
+    authDomain: "diaryapp-1d89f.firebaseapp.com",
+    projectId: "diaryapp-1d89f",
+    storageBucket: "diaryapp-1d89f.firebasestorage.app",
+    messagingSenderId: "834854785345",
+    appId: "1:834854785345:web:93dff27ab48a760d4591c0",
+    measurementId: "G-ND3TS723LH"
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'your-ios-api-key',
-    appId: '1:your-project-number:ios:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.appspot.com',
-    iosBundleId: 'com.example.app',
+    apiKey: "AIzaSyBwX3ykp7URAEe8bWpzUoWZdgx322zlDK0",
+    authDomain: "diaryapp-1d89f.firebaseapp.com",
+    projectId: "diaryapp-1d89f",
+    storageBucket: "diaryapp-1d89f.firebasestorage.app",
+    messagingSenderId: "834854785345",
+    appId: "1:834854785345:web:93dff27ab48a760d4591c0",
+    measurementId: "G-ND3TS723LH"
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'your-web-api-key-here',
-    appId: '1:your-project-number:web:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'your-project-id',
-    authDomain: 'your-project-id.firebaseapp.com',
-    storageBucket: 'your-project-id.appspot.com',
-    measurementId: 'G-your-measurement-id',
+    apiKey: "AIzaSyBwX3ykp7URAEe8bWpzUoWZdgx322zlDK0",
+    authDomain: "diaryapp-1d89f.firebaseapp.com",
+    projectId: "diaryapp-1d89f",
+    storageBucket: "diaryapp-1d89f.firebasestorage.app",
+    messagingSenderId: "834854785345",
+    appId: "1:834854785345:web:93dff27ab48a760d4591c0",
+    measurementId: "G-ND3TS723LH"
   );
 }
