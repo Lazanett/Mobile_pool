@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:app/login_page.dart';
+import 'package:app/profile_page.dart';
+import 'package:app/addentry_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:app/services/test_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +14,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  //await populateTestData();
   runApp(const MyApp());
 }
 
@@ -21,11 +25,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Notes App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomePage(),
+      title: 'Diary App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/login': (context) => const LoginPage(),
+        '/profile': (context) => const ProfilePage(),
+        '/add_entry': (context) => const AddEntryPage(),
+      },
     );
   }
 }
@@ -86,7 +94,6 @@ class HomePage extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                 ),
               ),
-
             ],
           ),
         ),

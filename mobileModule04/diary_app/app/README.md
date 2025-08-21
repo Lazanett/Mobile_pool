@@ -16,8 +16,4 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 
-in app =
-"flutter pub get firebase_core"
-"flutter pub add firebase_core"
-
-flutter pub add github_sign_in
+Firebase is a mobile and web development platform offered by Google that provides tools for managing user authentication, storing data in real time, hosting applications, and much more. It allows you to quickly build applications without having to manage the entire server-side infrastructure.
