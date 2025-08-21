@@ -4,17 +4,15 @@ import 'package:app/profile_page.dart';
 import 'package:app/addentry_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:app/services/test_data.dart';
+import 'package:app/services/firestore_service.dart';
+import 'package:app/services/populate_test_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 🔹 Initialisation Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  //await populateTestData();
   runApp(const MyApp());
 }
 

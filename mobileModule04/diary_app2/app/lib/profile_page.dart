@@ -33,48 +33,57 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  // 📝 Créer une nouvelle collection
+  // create new collection
   Future<void> _showCreateCollectionDialog() async {
+    final TextEditingController _collectionNameController = TextEditingController();
+
     return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Créer une collection"),
+      context: context, // contexte parent du widget
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Create a collection"),
         content: TextField(
           controller: _collectionNameController,
           decoration: const InputDecoration(
-            labelText: "Nom de la collection",
+            labelText: "Collection name",
             border: OutlineInputBorder(),
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Annuler"),
+            onPressed: () {
+              _collectionNameController.clear();
+              Navigator.of(dialogContext).pop(); // fermer popup avec context du builder
+            },
+            child: const Text("Cancel"),
           ),
           ElevatedButton(
             onPressed: () async {
               if (_collectionNameController.text.isNotEmpty) {
-                await _firestoreService.addCollection(
-                  userEmail: user!.email!,
-                  nameCollection: _collectionNameController.text,
-                );
-                _collectionNameController.clear();
-                Navigator.pop(context);
+                try {
+                  await _firestoreService.addCollection(
+                    userEmail: user!.email!,
+                    nameCollection: _collectionNameController.text,
+                  );
+                } catch (e) {
+                  print("Erreur lors de la création : $e");
+                }
+                _collectionNameController.clear(); // réinitialiser l'input
+                if (dialogContext.mounted) Navigator.of(dialogContext).pop(); // fermer popup
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFFFA07A),
               foregroundColor: Colors.white,
             ),
-            child: const Text("Créer"),
+            child: const Text("Save"),
           ),
         ],
       ),
     );
   }
 
-  // 📄 Afficher les détails d'un document
+  // print details note
   void _showDocumentDetails(QueryDocumentSnapshot doc) {
     showDialog(
       context: context,
@@ -119,14 +128,14 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Fermer"),
+            child: const Text("Close"),
           ),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
               await _firestoreService.deleteEntry(doc.id);
             },
-            child: const Text("Supprimer", style: TextStyle(color: Colors.red)),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -159,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
         actions: selectedCollectionId != null
             ? [
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     setState(() {
                       selectedCollectionId = null;
@@ -178,11 +187,11 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         child: selectedCollectionId == null
-            ? _buildCollectionsList() // Afficher les collections
-            : _buildDocumentsList(), // Afficher les documents d'une collection
+            ? _buildCollectionsList()
+            : _buildDocumentsList(),
       ),
       floatingActionButton: selectedCollectionId == null
-          ? null // Pas de FAB sur la liste des collections
+          ? null
           : FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamed(
@@ -200,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 📁 Widget pour afficher la liste des collections
+  // Widget for list of collections
   Widget _buildCollectionsList() {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestoreService.getUserCollections(user!.email!),
@@ -217,10 +226,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
         return ListView.builder(
           padding: const EdgeInsets.all(16.0),
-          itemCount: collections.length + 1, // +1 pour le bouton d'ajout
+          itemCount: collections.length + 1,
           itemBuilder: (context, index) {
             if (index == collections.length) {
-              // Bouton pour ajouter une nouvelle collection
+              // Bouton add new collection
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: ElevatedButton.icon(
@@ -234,7 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   icon: const Icon(Icons.add),
-                  label: const Text("Nouvelle Collection"),
+                  label: const Text("New Collection"),
                 ),
               );
             }
@@ -259,10 +268,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontSize: 16,
                   ),
                 ),
-                subtitle: Text(
-                  "Créée le ${_formatDate(collection["createdAt"])}",
-                  style: const TextStyle(color: Colors.grey),
-                ),
+                // subtitle: Text(
+                //   "Créée le ${_formatDate(collection["createdAt"])}",
+                //   style: const TextStyle(color: Colors.grey),
+                // ),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   setState(() {
@@ -278,11 +287,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 📄 Widget pour afficher la liste des documents d'une collection
+  // 📄 Widget for note list of collection
   Widget _buildDocumentsList() {
     return Column(
       children: [
-        // En-tête avec le nom de la collection
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16.0),
@@ -303,7 +311,7 @@ class _ProfilePageState extends State<ProfilePage> {
             textAlign: TextAlign.center,
           ),
         ),
-        // Liste des documents
+        // List notes
         Expanded(
           child: StreamBuilder<QuerySnapshot>(
             stream: _firestoreService.getCollectionDocuments(selectedCollectionId!),
@@ -333,7 +341,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: CircleAvatar(
                         backgroundColor: const Color(0xFFFFA07A),
                         child: Text(
-                          doc["feeling"].split(' ')[0], // Premier emoji
+                          doc["feeling"].split(' ')[0],
                           style: const TextStyle(fontSize: 20),
                         ),
                       ),
@@ -360,7 +368,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🆘 État vide pour les collections
+  // empty profile 
   Widget _buildEmptyCollectionsState() {
     return Center(
       child: Padding(
@@ -371,25 +379,16 @@ class _ProfilePageState extends State<ProfilePage> {
             const Icon(
               Icons.folder_open,
               size: 80,
-              color: Colors.white70,
+              color: Color(0xFFFFA07A),
             ),
             const SizedBox(height: 16),
             const Text(
-              "Aucune collection",
+              "No collection",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Color(0xFFFFA07A),
               ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              "Créez votre première collection pour commencer votre journal",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white70,
-              ),
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
@@ -403,7 +402,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               icon: const Icon(Icons.add),
-              label: const Text("Créer une Collection"),
+              label: const Text("Create a Collection"),
             ),
           ],
         ),
@@ -411,7 +410,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🆘 État vide pour les documents
+  // No document in collection
   Widget _buildEmptyDocumentsState() {
     return Center(
       child: Padding(
@@ -426,7 +425,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Aucun document",
+              "No document",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -435,7 +434,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 8),
             Text(
-              "Cette collection est vide.\nAjoutez votre première entrée !",
+              "This collection is empty.",
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white70,
@@ -448,9 +447,9 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // 🕰️ Formater la date
+  // Format the date
   String _formatDate(Timestamp? timestamp) {
-    if (timestamp == null) return "Date inconnue";
+    if (timestamp == null) return "Date unknown";
     final date = timestamp.toDate();
     return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
   }

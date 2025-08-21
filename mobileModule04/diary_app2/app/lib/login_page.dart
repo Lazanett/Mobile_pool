@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:app/profile_page.dart';
+import 'package:app/main.dart';
+import 'services/populate_test_data.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -46,6 +48,9 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       if (user != null) {
+        // if (user.email == "u4284112739@gmail.com") {
+        //   await populateTestDataForUser(user.email!);
+        // }
         Navigator.pushReplacementNamed(context, '/profile');
       }
 
