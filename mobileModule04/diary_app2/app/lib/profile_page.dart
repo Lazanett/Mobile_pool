@@ -65,8 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     userEmail: user!.email!,
                     nameCollection: _collectionNameController.text,
                   );
+
                 } catch (e) {
-                  print("Erreur lors de la création : $e");
+                  print("Error during creation: $e");
                 }
                 _collectionNameController.clear(); // réinitialiser l'input
                 if (dialogContext.mounted) Navigator.of(dialogContext).pop(); // fermer popup
@@ -117,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 16),
               const Text(
-                "Contenu :",
+                "Content :",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
@@ -417,7 +418,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const Icon(
               Icons.note_add,
               size: 80,
-              color: Colors.white70,
+              color: Color(0xFFFFA07A),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -425,7 +426,7 @@ class _ProfilePageState extends State<ProfilePage> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Color(0xFFFFA07A),
               ),
             ),
             const SizedBox(height: 8),
@@ -433,7 +434,7 @@ class _ProfilePageState extends State<ProfilePage> {
               "This collection is empty.",
               style: const TextStyle(
                 fontSize: 16,
-                color: Colors.white70,
+                color: Color(0xFFFFA07A),
               ),
               textAlign: TextAlign.center,
             ),

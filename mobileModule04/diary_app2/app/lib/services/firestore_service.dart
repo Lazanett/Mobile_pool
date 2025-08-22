@@ -3,6 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+
+  Future<bool> collectionExists({
+    required String userEmail,
+    required String nameCollection,
+  }) async {
+    final query = await _db
+        .collection("users")
+        .doc(userEmail)
+        .collection("collections")
+        .where("name", isEqualTo: nameCollection)
+        .get();
+
+    return query.docs.isNotEmpty;
+  }
   // Add a collection
   Future<void> addCollection({
     required String userEmail,

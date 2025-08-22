@@ -21,46 +21,46 @@ Future<void> populateTestDataForUser(String userEmail) async {
   // Définir les collections et leurs documents de test
   final collectionsData = [
     {
-      'name': 'Journal Personnel',
+      'name': 'Personal Diary',
       'documents': [
         {
-          'title': 'Ma première journée',
-          'feeling': '😊 Heureux',
-          'content': 'Aujourd\'hui a été une journée fantastique ! J\'ai commencé un nouveau projet qui me passionne beaucoup.',
+          'title': 'My first day',
+          'feeling': '😊 Happy',
+          'content': 'Today was a fantastic day! I started a new project that I am very excited about.',
           'date': DateTime.now().subtract(const Duration(days: 2)),
         },
         {
-          'title': 'Réflexions du soir',
-          'feeling': '🤔 Pensif',
-          'content': 'Je repense à mes objectifs de l\'année. Il est important de faire le point régulièrement sur ses progrès.',
+          'title': 'Evening reflections',
+          'feeling': '😮 Surprise',
+          'content': 'I think back on my goals for the year.',
           'date': DateTime.now().subtract(const Duration(days: 1)),
         },
       ],
     },
     {
-      'name': 'Travail',
+      'name': 'Work',
       'documents': [
         {
-          'title': 'Réunion équipe',
-          'feeling': '💼 Professionnel',
-          'content': 'Réunion productive avec l\'équipe. Nous avons défini les priorités pour le prochain sprint.',
+          'title': 'Team meeting',
+          'feeling': '😊 Happy',
+          'content': 'Productive meeting with the team. We defined the priorities for the next sprint.',
           'date': DateTime.now().subtract(const Duration(days: 3)),
         },
         {
-          'title': 'Formation Flutter',
-          'feeling': '🚀 Motivé',
-          'content': 'J\'ai appris de nouvelles techniques en Flutter aujourd\'hui. Le développement mobile devient de plus en plus intéressant !',
+          'title': 'Flutter Training',
+          'feeling': '😊 Happy',
+          'content': 'I learned some new Flutter techniques today. Mobile development is getting more and more interesting!',
           'date': DateTime.now().subtract(const Duration(hours: 5)),
         },
       ],
     },
     {
-      'name': 'Santé',
+      'name': 'Health',
       'documents': [
         {
-          'title': 'Séance de sport',
-          'feeling': '💪 Énergique',
-          'content': 'Excellente séance de sport ce matin ! Je me sens plein d\'énergie pour attaquer la journée.',
+          'title': 'Workout session',
+          'feeling': '😊 Happy',
+          'content': 'Great workout this morning! I feel energized and ready to tackle the day.',
           'date': DateTime.now().subtract(const Duration(days: 1)),
         },
       ],
