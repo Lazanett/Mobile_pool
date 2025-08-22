@@ -268,10 +268,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontSize: 16,
                   ),
                 ),
-                // subtitle: Text(
-                //   "Créée le ${_formatDate(collection["createdAt"])}",
-                //   style: const TextStyle(color: Colors.grey),
-                // ),
                 trailing: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   setState(() {

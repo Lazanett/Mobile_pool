@@ -48,9 +48,7 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       if (user != null) {
-        // if (user.email == "u4284112739@gmail.com") {
-        //   await populateTestDataForUser(user.email!);
-        // }
+        await populateTestDataForUser(user.email!);
         Navigator.pushReplacementNamed(context, '/profile');
       }
 
