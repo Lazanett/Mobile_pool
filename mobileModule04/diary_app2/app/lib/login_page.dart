@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
       if (kIsWeb) {
         final githubProvider = GithubAuthProvider();
         githubProvider.addScope('read:user');
-        githubProvider.setCustomParameters({'allow_signup': 'true'});
+        githubProvider.setCustomParameters({'prompt': 'select_account'});
 
         final userCredential =
             await FirebaseAuth.instance.signInWithPopup(githubProvider);
