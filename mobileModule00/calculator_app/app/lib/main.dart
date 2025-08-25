@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(
+    LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final height = constraints.maxHeight;
+        if (width < 375 || height < 667) {
+          return const MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Scaffold(
+              body: SizedBox.shrink(),
+            ),
+          );
+        }
+        return const MyApp();
+      },
+    ),
+  );
+}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

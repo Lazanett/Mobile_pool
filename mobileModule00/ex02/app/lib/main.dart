@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(
+    LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final height = constraints.maxHeight;
+        if (width < 375 || height < 667) {
+          return const MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: Scaffold(
+              body: SizedBox.shrink(),
+            ),
+          );
+        }
+        return const MyApp();
+      },
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -40,10 +58,12 @@ class CalculatorPage extends StatelessWidget {
 
     final btnSize = ((screenW - 8 * (perRow + 1)) / perRow)
         .clamp(50.0, (buttonsH - 8 * (rows + 1)) / rows);
-    
-    final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth < 375) {
-      return const SizedBox.shrink(); 
+
+    final screenWidth = media.size.width;
+    final screenHeight = media.size.height;
+
+    if (screenWidth < 375 || screenHeight < 400) {
+      return const SizedBox.shrink();
     }
 
     return Scaffold(
