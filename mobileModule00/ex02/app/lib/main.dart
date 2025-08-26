@@ -87,7 +87,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     } else {
       // Layout tablette - plus d'espacement
       return [
-        'AC', 'C', '', '/', '*', '',
+        'AC', 'C', '*', '/', '', '',
         '7', '8', '9', '-', '', '',
         '4', '5', '6', '+', '', '',
         '1', '2', '3', '=', '', '',
@@ -99,7 +99,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black, 
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        centerTitle: true,
+        title: const Text('Calculator', style: TextStyle(color: Colors.white)),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isSmall = _isSmallScreen(constraints);
