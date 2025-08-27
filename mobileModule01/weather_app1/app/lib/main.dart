@@ -98,7 +98,6 @@ class _WeatherHomePageState extends State<WeatherHomePage> with SingleTickerProv
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () {
-                    // Déclenche la géolocalisation
                     setState(() {
                       _searchText = "Geolocation";
                     });
@@ -120,8 +119,8 @@ class _WeatherHomePageState extends State<WeatherHomePage> with SingleTickerProv
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: Colors.indigo[600], // couleur de la bordure
-            height: 2.0, // épaisseur de la bordure
+            color: Colors.indigo[600],
+            height: 2.0,
           ),
         ),
       ),

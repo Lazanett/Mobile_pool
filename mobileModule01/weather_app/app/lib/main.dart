@@ -70,42 +70,53 @@ class _WeatherHomePageState extends State<WeatherHomePage> with SingleTickerProv
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
-            child: Listener(
-              onPointerDown: (_) {
-                setState(() {
-                  _isPressed = true;
-                });
-              },
-              onPointerUp: (_) {
-                setState(() {
-                  _isPressed = false;
-                });
-              },
-              onPointerCancel: (_) {
-                setState(() {
-                  _isPressed = false;
-                });
-              },
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: _isPressed ? Colors.transparent : Colors.indigo[600],
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.indigo[600]!,
-                    width: 2,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    // Search
+                  },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.indigo[600],
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.search, color: Colors.white, size: 20),
                   ),
                 ),
-                child: Icon(
-                  Icons.search,
-                  color: _isPressed ? Colors.indigo[600] : Colors.white,
-                  size: 20,
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () {
+                    // Geolocalisation
+                  },
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.indigo[600],
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.my_location, color: Colors.white, size: 20),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
+        // bottom: TabBar(
+        //   controller: _tabController,
+        //   tabs: const [
+        //     Tab(icon: Icon(Icons.access_time), text: "Currently"),
+        //     Tab(icon: Icon(Icons.today), text: "Today"),
+        //     Tab(icon: Icon(Icons.calendar_view_week), text: "Weekly"),
+        //   ],
+        //   labelColor: Colors.indigo[600],
+        //   unselectedLabelColor: Colors.grey,
+        //   indicatorColor: Colors.indigo[600],
+        // ),
       ),
       body: TabBarView(
         controller: _tabController,
